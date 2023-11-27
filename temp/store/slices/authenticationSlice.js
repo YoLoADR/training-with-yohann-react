@@ -1,52 +1,28 @@
 // slices/authenticationSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { auth } from '../../firebase'; // Assurez-vous que le chemin est correct
 
 const initialState = {
   isAuthenticated: false,
   user: null,
-  error: null,
 };
 
 export const authenticationSlice = createSlice({
   name: 'authentication',
   initialState,
   reducers: {
-    setUser(state, action) {
+    login(state, action) {
+      state.isAuthenticated = true;
       state.user = action.payload;
-      state.isAuthenticated = !!action.payload;
-      state.error = null;
     },
-    setError(state, action) {
-      state.error = action.payload;
+    logout(state) {
+      state.isAuthenticated = false;
+      state.user = null;
     },
-    clearError(state) {
-      state.error = null;
-    }
   },
 });
 
-export const { setUser, setError, clearError } = authenticationSlice.actions;
+export const { login, logout } = authenticationSlice.actions;
 
+// Vous pouvez ajouter ici les thunk actions pour l'authentification si nécessaire
 
-// Fonction pour se connecter
-export const login = (email, password) => async (dispatch) => {
-    try {
-      const userCredential = await auth.signInWithEmailAndPassword(email, password);
-      dispatch(setUser(userCredential.user));
-    } catch (error) {
-      dispatch(setError(error.message));
-    }
-  };
-  
-  // Fonction pour se déconnecter
-  export const logout = () => async (dispatch) => {
-    try {
-      await auth.signOut();
-      dispatch(setUser(null));
-    } catch (error) {
-      dispatch(setError(error.message));
-    }
-  };
-  
-  export default authenticationSlice.reducer;
+export default authenticationSlice.reducer;
